@@ -88,15 +88,15 @@ proc write_eqy_script_for_sky130hd {} {
 }
 
 
-proc write_eqy_script { } {
+proc write_eqy_script {goldfilename gatefilename script} {
     set top_cell [current_design]
     set cell_files [get_verilog_cells_for_design]
-    set outfile [open "$::env(OBJECTS_DIR)/4_eqy_test.eqy" w]
+    set outfile [open "$::env(OBJECTS_DIR)/$script" w]
     # Gold netlist
-    puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
+    puts $outfile "\[gold]\nread_verilog -sv $goldfilename $cell_files\n"
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
     # Modified netlist 
-    puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
+    puts $outfile "\[gate]\nread_verilog -sv $gatefilename $cell_files\n"
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 
     # Recommendation from eqy team on how to speed up a design
@@ -110,16 +110,15 @@ proc write_eqy_script { } {
     close $outfile
 }
 
-proc run_equivalence_test {} {
-    write_eqy_verilog 4_after_rsz.v
-    write_eqy_script
+proc run_equivalence_test {goldfilename gatefilename script log} {
+    write_eqy_script $goldfilename $gatefilename $script
 
     eval exec eqy -d $::env(LOG_DIR)/4_eqy_output \
         --force \
         --jobs $::env(NUM_CORES) \
-        $::env(OBJECTS_DIR)/4_eqy_test.eqy \
-        > $::env(LOG_DIR)/4_equivalence_check.log
-    set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
+        $::env(OBJECTS_DIR)/$script \
+        > $::env(LOG_DIR)/$log
+    set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/$log]
     if { $count == 0 } {
       error "Repair timing output failed equivalence test"
     } else {

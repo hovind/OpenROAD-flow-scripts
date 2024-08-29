@@ -89,7 +89,8 @@ if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_T
   repair_timing {*}$additional_args
 
   if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
-      run_equivalence_test
+      write_eqy_verilog 4_after_rsz.v
+      run_equivalence_test $::env(RESULTS_DIR)/4_before_rsz.v $::env(RESULTS_DIR)/4_after_rsz.v 4_eqy_test.eqy 4_equivalence_check.log
   }
 
   set result [catch {detailed_placement} msg]
