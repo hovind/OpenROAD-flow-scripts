@@ -1,3 +1,12 @@
+# Equivalence Checking
+
+```bash
+$ make DESIGN_CONFIG=./designs/asap7/adder/config.mk clean_all
+$ make DESIGN_CONFIG=./designs/asap7/adder/config.mk synth
+$ make DESIGN_CONFIG=./designs/asap7/adder/config.mk open_synth <<< 'run_equivalence_test ./designs/src/adder/Adder.v ./results/asap7/adder/base/1_1_yosys.v 1_2_test.eqy 1_2_test.txt'
+$ gtkwave logs/asap7/adder/base/4_eqy_output/strategies/adder.io_dst/basic/trace.vcd
+```
+
 # OpenROAD Flow
 
 [![Build Status](https://jenkins.openroad.tools/buildStatus/icon?job=OpenROAD-flow-scripts-Public%2Fpublic_tests_all%2Fmaster)](https://jenkins.openroad.tools/view/Public/job/OpenROAD-flow-scripts-Public/job/public_tests_all/job/master/)
